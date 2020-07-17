@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://bdg194:bdg194@bloodbase.n2jug.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    "jwtSecret": "secret-token"
+}
