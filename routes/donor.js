@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Donor = require('../models/Donor');
 const User = require('../models/User');
+const Report = require('../models/Report');
 const { check, validationResult } = require('express-validator');
 
 // #Route: GET api/donor/me  #Access: Private
@@ -31,7 +32,8 @@ router.get('/me', auth, async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const donors = await Donor.find()
-            .populate('user', ['avatar', 'kind']);
+            .populate('user', ['avatar', 'kind'])
+
         res.json(donors)
     } catch (err) {
         console.error(err.message);
@@ -46,7 +48,8 @@ router.get('/', async (req, res) => {
 router.get('/user/:user_id', async (req, res) => {
     try {
         const donor = await Donor.findOne({ user: req.params.user_id })
-            .populate('user', ['avatar', 'kind']);
+            .populate('user', ['name', 'avatar', 'kind'])
+            
         if (!donor) return res.status(400).json({ msg: 'no donor profile for this user!...' });
         res.json(donors);
     } catch (err) {
@@ -63,8 +66,6 @@ router.get('/user/:user_id', async (req, res) => {
 // #Route: POST api/donor  #Access: Private
 // #Description: create donor profile - update existing one
 router.post('/', [auth, [
-    check('name', 'missing field!...').not().isEmpty(),
-    check('surname', 'missing field!...').not().isEmpty(),
     check('birthdate', 'missing field!...').not().isEmpty(),
     check('blood', 'missing field!...').not().isEmpty(),
     check('rhesus', 'missing field!...').not().isEmpty(),
@@ -79,13 +80,11 @@ router.post('/', [auth, [
             .json({ errors: errors.array() });
     }
 
-    const { name, surname, birthdate, blood, rhesus, address, city, zipcode, governorate, otherDiseases, infectiousDiseases, hematologicalDiseases } = req.body;
+    const { birthdate, blood, rhesus, address, city, zipcode, governorate, otherDiseases, infectiousDiseases, hematologicalDiseases } = req.body;
 
     // :build donor profile object
     const donorProfile = {};
     donorProfile.user = req.user.id;
-    if (name) donorProfile.name = name;
-    if (surname) donorProfile.surname = surname;
     if (birthdate) donorProfile.birthdate = birthdate;
     if (blood) donorProfile.blood = blood;
     if (rhesus) donorProfile.rhesus = rhesus;
@@ -129,5 +128,42 @@ router.post('/', [auth, [
     res.send('ok');
 
 })
+
+
+// #Route: PUT api/donor/donation  #Access: Private
+// #Description: Insert donation
+router.put('/donation', [auth, [
+    check('date', 'required field!...').not().isEmpty(),
+    check('next', 'required field!...').not().isEmpty()
+]], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400)
+            .json({ errors: errors.array() });
+    }
+
+    const {governorate, center, date, after, next} = req.body;
+    const don = {
+        governorate, 
+        center,
+        date,
+        after,
+        next
+    };
+
+    
+    try {
+        const donor = await Donor.findOne({ user: req.user.id })
+        donor.donations.push(don);
+        donor.save();
+        
+        res.json(donor)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500)
+            .send('server error!...');
+    }
+})
+
 
 module.exports = router

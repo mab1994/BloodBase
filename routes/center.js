@@ -10,7 +10,7 @@ const { check, validationResult } = require('express-validator');
 router.get('/me', auth, async (req, res) => {
     try {
         const center = await Center.findOne({ user: req.user.id })
-            .populate('user', ['avatar', 'kind']);
+            .populate('user', ['name', 'avatar', 'kind']);
         if (!center) {
             res.status(400)
                 .json({ msg: 'cannot find profile for this medical center' })
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
 router.get('/user/:user_id', async (req, res) => {
     try {
         const center = await Center.findOne({ user: req.params.user_id })
-            .populate('user', ['avatar', 'kind']);
+            .populate('user', ['name', 'avatar', 'kind']);
         if (!center) return res.status(400).json({ msg: 'no center profile for this user!...' });
         res.json(center);
     } catch (err) {
@@ -64,7 +64,6 @@ router.get('/user/:user_id', async (req, res) => {
 // #Route: POST api/center  #Access: Private
 // #Description: create medical center profile
 router.post('/', [auth, [
-    check('name', 'missing field!...').not().isEmpty(),
     check('ownership', 'missing field!...').not().isEmpty(),
     check('address', 'missing field!...').not().isEmpty(),
     check('city', 'missing field!...').not().isEmpty(),
@@ -77,12 +76,11 @@ router.post('/', [auth, [
             .json({ errors: errors.array() });
     }
 
-    const { name, ownership, address, city, zipcode, governorate } = req.body;
+    const { ownership, address, city, zipcode, governorate } = req.body;
 
     // :build medical center profile object
     const centerProfile = {};
     centerProfile.user = req.user.id;
-    if (name) centerProfile.name = name;
     if (ownership) centerProfile.ownership = ownership;
     if (address) centerProfile.address = address;
     if (city) centerProfile.city = city;

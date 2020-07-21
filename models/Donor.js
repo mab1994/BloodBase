@@ -2,16 +2,8 @@ const mongoose = require('mongoose');
 
 const DonorSchema = mongoose.Schema({
     user: {
-       type: mongoose.Schema.Types.ObjectId,
-       ref: 'users' 
-    },
-    name: {
-        type: String,
-        required: true
-     },
-    surname: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
     },
     birthdate: {
         type: String,
@@ -25,10 +17,25 @@ const DonorSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    donations: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'report'
-    }],
+    donations: [
+        {
+            center: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'center'
+            },
+            date: {
+                type: String,
+                required: true
+            },
+            after: {
+                type: String
+            },
+            next: {
+                type: String,
+                required: true
+            }
+        }
+    ],
     address: {
         type: String,
         required: true

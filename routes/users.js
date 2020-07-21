@@ -11,6 +11,7 @@ const User = require('../models/User');
 // #Route: POST api/users  #Access: Public
 // #Description: User register
 router.post('/', [
+    check('name', 'required field! missing email...').not().isEmpty(),
     check('email', 'required field! missing email...').isEmail(),
     check('password', 'required field! missing or wrong password...').not().isEmpty().isLength({ min: 8 }),
     check('kind', 'required field! missing kind...').not().isEmpty()
@@ -20,7 +21,7 @@ router.post('/', [
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, password, kind } = req.body
+    const { name, email, password, kind } = req.body
 
     try {
 
@@ -39,6 +40,7 @@ router.post('/', [
 
         // :new user to database
         user = new User({
+            name,
             email,
             password,
             kind,
