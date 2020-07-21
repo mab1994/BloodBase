@@ -19,9 +19,13 @@ const DonorSchema = mongoose.Schema({
     },
     donations: [
         {
+            governorate: {
+                type: String,
+                // required: true
+            },
             center: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'center'
+                type: String,
+                // required: true
             },
             date: {
                 type: String,

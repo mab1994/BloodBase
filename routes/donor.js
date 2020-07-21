@@ -155,9 +155,30 @@ router.put('/donation', [auth, [
     try {
         const donor = await Donor.findOne({ user: req.user.id })
         donor.donations.push(don);
-        donor.save();
+        await donor.save();
         
         res.json(donor)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500)
+            .send('server error!...');
+    }
+})
+
+
+// #Route: DELETE api/donor/donation/:don_id  #Access: Private
+// #Description: delete donation
+router.delete('/donation/:don_id', auth, async (req, res) => {
+    try {
+        const donor = await Donor.findOne({ user: req.user.id })
+
+        // :get remove index
+        const removeIndex = donor.donations.map(el => el.id).indexOf(req.params.don_id);
+        donor.donations.splice(removeIndex, 1);
+
+        await donor.save();
+        res.json(donor)
+
     } catch (err) {
         console.error(err.message);
         res.status(500)
