@@ -1,0 +1,65 @@
+.site-page-header {
+    border: 1px solid rgb(235, 237, 240);
+  }
+
+  .navbar {
+      display: flex;
+      justify-content: space-around;
+  }
+
+  .brandname {
+      font-family: 'Roboto';
+      color: #f50057;
+  }
+
+  .brand {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 2%;
+  }
+
+  .centered {
+      justify-content: center;
+      align-items: center;
+  }
+
+  .lg-logo {
+      justify-content: center;
+      align-items: center;
+      margin: 5% 45% 1%;
+  }
+
+  .lg-desc {
+    justify-content: center;
+    align-items: center;
+    padding: 0% 15%;
+}
+
+  .c-desc {
+      font-size: medium;
+      font-family: 'Roboto', 'Arial';
+      text-align: center;
+  }
+
+  .lg-btns {
+      display: flex;
+      padding: 0% 40%;
+      justify-content: space-around;
+  }
+
+  .home-btn {
+      margin-left: 2px;
+  }
+
+  .form-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2%;
+  }
+
+  .val {
+      width: 200%;
+  }
