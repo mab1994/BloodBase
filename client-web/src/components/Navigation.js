@@ -6,8 +6,14 @@ import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import HomeIcon from '@material-ui/icons/Home';
+import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
+import PersonSharpIcon from '@material-ui/icons/PersonSharp';
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import InvertColorsOutlinedIcon from '@material-ui/icons/InvertColorsOutlined';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { logout } from '../actions/AuthActions';
 
 
 const useStyles = makeStyles({
@@ -16,10 +22,60 @@ const useStyles = makeStyles({
     },
 });
 
-const Navigation = () => {
-
+const Navigation = ({ auth: { isAuthenticated, user, loading }, logout }) => {
+    
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
+
+    const notConnected = () => (
+        <BottomNavigation
+                value={value}
+                onChange={(event, newValue) => {
+                    setValue(newValue);
+                }}
+                showLabels
+                className={classes.root}
+                
+            >
+                <Link to='/' style={{ textDecoration:'none' }}><BottomNavigationAction showLabel label="Accueil" icon={<HomeIcon />} /></Link>
+                             <BottomNavigationAction showLabel label="Demandes du don" icon={<FavoriteIcon />} />
+                <Link to='/register' style={{ textDecoration:'none' }}><BottomNavigationAction showLabel  label="Inscription" icon={<AddToPhotosIcon />} /></Link>
+                <Link to='/login' style={{ textDecoration:'none' }}><BottomNavigationAction showLabel label="Identification" icon={<ExitToAppIcon />} /></Link>
+            </BottomNavigation>
+    );
+
+    const donorConnected = () => (
+        <BottomNavigation
+                value={value}
+                onChange={(event, newValue) => {
+                    setValue(newValue);
+                }}
+                showLabels
+                className={classes.root}
+            >
+                             <BottomNavigationAction label="Profil" icon={<PersonSharpIcon />} />
+                             <BottomNavigationAction label="Demandes du don" icon={<FavoriteIcon />} />
+                <Link to='/' style={{ textDecoration:'none' }}><BottomNavigationAction showLabel label="Quitter" icon={<DirectionsWalkIcon />} onClick={logout} /></Link>
+            </BottomNavigation>
+    )
+
+    const centerConnected = () => (
+        <BottomNavigation
+                value={value}
+                onChange={(event, newValue) => {
+                    setValue(newValue);
+                }}
+                showLabels
+                className={classes.root}
+            >
+                             <BottomNavigationAction label="Profil" icon={<AccountBalanceIcon />} />
+                             <BottomNavigationAction label="Demandes du don" icon={<FavoriteIcon />} />
+                             <BottomNavigationAction label="Nouvelle demande" icon={<NoteAddIcon />} />
+                <Link to='/' style={{ textDecoration:'none' }}><BottomNavigationAction showLabel label="Quitter" icon={<DirectionsWalkIcon />} onClick={logout} /></Link>
+            </BottomNavigation>
+    )
+
+    
 
     return (
         <div className='navbar'>
@@ -28,22 +84,16 @@ const Navigation = () => {
                 <h2 className='brandname'>BloodBase</h2>
             </div></Link>
 
-            <BottomNavigation
-                value={value}
-                onChange={(event, newValue) => {
-                    setValue(newValue);
-                }}
-                showLabels
-                className={classes.root}
-            >
-                <Link to='/'><BottomNavigationAction label="Accueil" icon={<HomeIcon />} /></Link>
-                             <BottomNavigationAction label="Demandes du don" icon={<FavoriteIcon />} />
-                <Link to='/register'><BottomNavigationAction label="Inscription" icon={<AddToPhotosIcon />} /></Link>
-                <Link to='/login'><BottomNavigationAction label="Identification" icon={<ExitToAppIcon />} /></Link>
-            </BottomNavigation>
+            {
+                (isAuthenticated) ? (user.kind === 'Donneur' ? donorConnected() : centerConnected()) : notConnected()
+            }
         </div>
 
     )
 }
 
-export default Navigation
+const mapStateToProps = state => ({
+    auth: state.auth
+})
+
+export default connect(mapStateToProps, { logout })(Navigation)

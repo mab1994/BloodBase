@@ -63,3 +63,7 @@
   .val {
       width: 200%;
   }
+
+  .er {
+      border-color: crimson;
+  }

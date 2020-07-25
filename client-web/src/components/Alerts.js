@@ -1,21 +1,20 @@
 import React from 'react'
 import Alert from '@material-ui/lab/Alert';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types'
 
-const Alerts = props => {
-    return (
-        props.alert.length > 0 && props.alert.map(alert => (
-            <Alert key={alert.id} severity={alert.type} variant={alert.fillness}>
-                {alert.msg}
-            </Alert>
-        ))
+const Alerts = ({ alerts }) =>
+    alerts !== null && alerts.length > 0 && alerts.map(al => (
+        <Alert key={al.id} variant={al.fillness} severity={al.type}>{al.msg}</Alert>
+    ))
 
-    )
+Alert.PropTypes = {
+    alerts: PropTypes.array.isRequired
 }
 
 const mapStateToProps = state => {
     return {
-        alert: state.alert
+        alerts: state.alert
     }
 }
 
